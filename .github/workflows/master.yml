@@ -1,0 +1,33 @@
+
+name: Build Binaries
+
+on:
+  repository_dispatch:
+    types: test-workflow
+  push:
+    paths:
+      - 'release-versions/*'
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.PASSWORD }}
+    - name: Get version
+      id: ver-check
+      run: echo ::set-output name=version::$(sed 's/.*v//' release-versions/lua-latest.txt)
+    - name: Get Lua and Unzip
+      run: wget https://github.com/lua/lua/archive/v${{ steps.ver-check.outputs.version }}.zip -O temp.zip && unzip temp.zip
+    - name: Build Lua
+      run: make ./lua-${{ steps.ver-check.outputs.version }}/makefile a
+    - name: Copy new binaries
+      run:  cp ./lua-${{ steps.ver-check.outputs.version }}/liblua.a ./liblua.a
+    - name: Commit updated binary
+      run: |
+        git config --global user.name 'mundusnine'
+        git config --global user.email 'mundusnine@gmail.com'
+        git commit -am "Update binary to ${{ steps.ver-check.outputs.version }}"
+        git push
