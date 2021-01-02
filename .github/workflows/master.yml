@@ -22,7 +22,9 @@ jobs:
     - name: Get Lua and Unzip
       run: wget https://github.com/lua/lua/archive/v${{ steps.ver-check.outputs.version }}.zip -O temp.zip && unzip temp.zip
     - name: Build Lua
-      run: make ./lua-${{ steps.ver-check.outputs.version }}/makefile a
+      run: |
+       cd ./lua-${{ steps.ver-check.outputs.version }}
+       make a
     - name: Copy new binaries
       run:  cp ./lua-${{ steps.ver-check.outputs.version }}/liblua.a ./liblua.a
     - name: Commit updated binary
