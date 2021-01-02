@@ -1,7 +1,5 @@
 name: Get latest release version
 on:
-  repository_dispatch:
-    types: test-workflow
   schedule:
     - cron:  '0 10 * * *'
 jobs:
