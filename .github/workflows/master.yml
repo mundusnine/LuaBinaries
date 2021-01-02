@@ -2,8 +2,6 @@
 name: Build Binaries
 
 on:
-  repository_dispatch:
-    types: test-workflow
   push:
     paths:
       - 'release-versions/*'
